@@ -77,7 +77,7 @@
   body {
     background: white !important;
     -webkit-print-color-adjust: exact;
-    color-adjust: exact;
+    print-color-adjust: exact; /* ✅ replaced deprecated color-adjust */
   }
   
   .no-print {
