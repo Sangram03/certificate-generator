@@ -3,6 +3,7 @@ import { Download } from "lucide-react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
+
 interface CertificateData {
   participantName: string;
   programName: string;
@@ -22,10 +23,10 @@ export const CertificatePreview: React.FC<CertificatePreviewProps> = ({ data }) 
   const formatDate = (dateString: string) => {
     if (!dateString) return "";
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
+    return date.toLocaleDateString("en-GB", {
       year: "numeric",
-      month: "long",
-      day: "numeric",
+      month: "2-digit",
+      day: "2-digit",
     });
   };
 
@@ -41,32 +42,22 @@ export const CertificatePreview: React.FC<CertificatePreviewProps> = ({ data }) 
 
   const handleDownload = async () => {
     if (!certificateRef.current) return;
-
-    // Wait for fonts/styles before capture
     await document.fonts.ready;
-
-    // Capture certificate with better options
     const canvas = await html2canvas(certificateRef.current, {
       scale: 2,
-      useCORS: true, // ensures gradients/images load
-      backgroundColor: "#ffffff", // prevent transparent background
+      useCORS: true,
+      backgroundColor: "#fff",
       logging: false,
     });
-
     const imgData = canvas.toDataURL("image/png");
-
-    // Create PDF in landscape A4
     const pdf = new jsPDF("landscape", "pt", "a4");
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = pdf.internal.pageSize.getHeight();
-
-    // Maintain aspect ratio
     const imgWidth = canvas.width;
     const imgHeight = canvas.height;
     const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
     const x = (pdfWidth - imgWidth * ratio) / 2;
     const y = (pdfHeight - imgHeight * ratio) / 2;
-
     pdf.addImage(imgData, "PNG", x, y, imgWidth * ratio, imgHeight * ratio);
     pdf.save(`${data.participantName}_Certificate.pdf`);
   };
@@ -91,77 +82,61 @@ export const CertificatePreview: React.FC<CertificatePreviewProps> = ({ data }) 
 
       {/* Certificate Area */}
       <div
-        id="certificate"
         ref={certificateRef}
-        className="relative bg-white p-8 md:p-12 rounded-lg border-2 border-gray-200 aspect-[4/3] flex flex-col justify-center min-h-[500px] md:min-h-[600px]"
+        className="relative bg-white p-10 md:p-16 rounded-lg border-4 border-blue-400 aspect-[4/3] flex flex-col justify-between min-h-[500px] md:min-h-[600px] overflow-hidden"
       >
-        {/* Header */}
-        <div className="text-center mb-6 md:mb-8">
-          <div className="flex items-center justify-center mb-4 md:mb-6">
-            <div className="text-3xl md:text-4xl font-bold">
-              <span className="text-blue-500">G</span>
-              <span className="text-red-500">o</span>
-              <span className="text-yellow-500">o</span>
-              <span className="text-blue-500">g</span>
-              <span className="text-green-500">l</span>
-              <span className="text-red-500">e</span>
-            </div>
-          </div>
-
-          <div className="relative inline-block">
-            <div
-              style={{
-                background: "linear-gradient(to right, #3b82f6, #8b5cf6, #2563eb)",
-                color: "white",
-                padding: "12px 24px",
-                borderRadius: "9999px",
-                fontWeight: 600,
-                boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-              }}
-            >
-              Certificate of {data.certificateType || "Participation"}
-            </div>
-
-            {/* Decorations */}
-            <div className="absolute -top-2 -left-2 w-8 h-8 bg-gradient-to-br from-red-400 to-yellow-400 rounded-full opacity-80"></div>
-            <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-gradient-to-br from-green-400 to-blue-400 rounded-full opacity-80"></div>
-          </div>
+        {/* Top Bar */}
+        <div className="flex justify-between items-center mb-8 absolute left-5 right-5 top-3">
+          {/* Google Logo */}
+          <img
+            src="/google.png" // Replace with your Google logo path
+            alt="Google Logo"
+            className="h-9 w-auto"
+          />
+          {/* Program Logo */}
+          <img
+            src="/logo.jpg" // Replace with your program logo path
+            alt="Program Logo"
+            className="h-20 w-auto"
+          />
         </div>
 
+        <img
+        src="/new.png"
+        alt="Blue Banner"
+        className="w-2/3 mx-auto mb-4"
+      />
+
         {/* Main Content */}
-        <div className="text-center mb-6 md:mb-8 space-y-4 md:space-y-6 flex-1 flex flex-col justify-center">
-          <p className="text-base md:text-lg text-gray-700 font-medium">
+        <div className="flex-1 flex flex-col items-center justify-center  mb-8 mt-1">
+          <p className="text-lg md:text-xl font-semibold text-gray-800 mb-4 text-justify">
             This is to certify that
           </p>
-
-          <div className="border-b-4 border-blue-500 pb-2 md:pb-3 mb-6 md:mb-8 max-w-xs md:max-w-md mx-auto">
-            <p className="text-xl md:text-3xl font-bold text-gray-900">
+          <div className="border-b-2 border-blue-400 pb-2 mb-6 w-2/3 mx-auto">
+            <span className="text-2xl md:text-3xl font-bold text-gray-900 text-center block">
               {data.participantName || "________________________"}
-            </p>
+            </span>
           </div>
-
-          <div className="max-w-xl md:max-w-2xl mx-auto space-y-3 md:space-y-4 px-4">
-            <p className="text-sm md:text-lg text-gray-700 leading-relaxed">
+          <div className="max-w-xl mx-auto text-justify">
+            <p className="text-base md:text-lg text-gray-700 mb-2">
               has successfully participated in{" "}
-              <span className="font-bold text-blue-600 underline decoration-blue-200">
+              <span className="font-bold text-blue-600 underline decoration-blue-200 text-center inline-block min-w-[150px]">
                 {data.programName || "____________________"}
               </span>
-              , organized by{" "}
-              <span className="font-bold text-blue-600">
+              , organized by the <span className="font-bold text-center inline-block">Google Student Ambassador</span>{" "}
+              at <span className="font-bold text-blue-600 text-center inline-block min-w-[150px]">
                 {data.organizationName || "____________________"}
               </span>
-            </p>
-
-            <p className="text-xs md:text-base text-gray-600 italic">
-              demonstrating enthusiasm, leadership, and commitment to fostering
-              learning and innovation within their community.
+              
+               
+              , demonstrating enthusiasm, leadership, and commitment to fostering learning and innovation within their community.
             </p>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="flex justify-between items-end mt-auto pt-4">
-          <div className="text-left">
+        <div className="flex justify-center items-end mb-16 pt-2 px-4 gap-80 max-w-xl mx-auto">
+          <div className="text-center">
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
               Date
             </p>
@@ -169,22 +144,37 @@ export const CertificatePreview: React.FC<CertificatePreviewProps> = ({ data }) 
               {data.date ? formatDate(data.date) : "_______________"}
             </p>
           </div>
-          <div className="text-right">
+          <div className="text-center">
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-              Initiative
+              Initiative name
             </p>
-            <p className="text-sm md:text-lg font-medium text-gray-800 mt-1">
-              {data.initiativeName || "_______________"}
-            </p>
+            <p className="text-sm md:text-lg font-medium text-gray-800 mt-1 whitespace-nowrap">
+  {data.initiativeName || "_______________"}
+</p>
+
           </div>
         </div>
-      </div>
 
-      <div className="mt-4 text-center">
-        <p className="text-sm text-gray-500 italic">
-          This certificate is generated automatically based on the information
-          provided
-        </p>
+        {/* Footer Quote */}
+        <div className="absolute bottom-2 left-0 w-full text-center px-4">
+          <p className="text-xs md:text-sm text-gray-500 italic">
+            "This certificate is awarded as part of the Google Student Ambassador Program to recognize valuable contributions in spreading knowledge and skills."
+          </p>
+        </div>
+
+        {/* Optional: Cloud decorations */}
+        <img
+          src="/left_cloud.png"
+          alt="Cloud Left"
+          className="absolute bottom-32 left-0 w-14 md:w-16 opacity-80"
+        />
+        <img
+          src="/right_cloud.png"
+          alt="Cloud Right"
+          className="absolute top-40 right-0 w-14 md:w-16 opacity-80"
+        />
+        {/* <img src="/cloud-left.png" className="absolute bottom-2 left-2 w-16 opacity-80" alt="" />
+        <img src="/cloud-right.png" className="absolute top-2 right-2 w-16 opacity-80" alt="" /> */}
       </div>
     </div>
   );
