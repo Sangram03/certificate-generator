@@ -27,9 +27,9 @@ export const CertificateForm: React.FC<CertificateFormProps> = ({ data, onChange
       ...data,
       date: today,
       certificateType: DEFAULT_CERTIFICATE_TYPE,
-      programName: "Student Ambassador Program",
+      programName: " Google Student Ambassador Program",
       organizationName: "Srinix College Of Engineering",
-      initiativeName: "Google Student Ambassador",
+      initiativeName: "Google Student Ambassador 2025",
     };
     onChange(updatedData);
     // eslint-disable-next-line
