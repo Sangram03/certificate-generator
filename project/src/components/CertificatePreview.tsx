@@ -42,12 +42,14 @@ export const CertificatePreview: React.FC<CertificatePreviewProps> = ({ data }) 
   const handleDownload = async () => {
     if (!certificateRef.current) return;
     await document.fonts.ready;
+
     const canvas = await html2canvas(certificateRef.current, {
       scale: 2,
       useCORS: true,
       backgroundColor: "#fff",
       logging: false,
     });
+
     const imgData = canvas.toDataURL("image/png");
     const pdf = new jsPDF("landscape", "pt", "a4");
     const pdfWidth = pdf.internal.pageSize.getWidth();
@@ -57,6 +59,7 @@ export const CertificatePreview: React.FC<CertificatePreviewProps> = ({ data }) 
     const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
     const x = (pdfWidth - imgWidth * ratio) / 2;
     const y = (pdfHeight - imgHeight * ratio) / 2;
+
     pdf.addImage(imgData, "PNG", x, y, imgWidth * ratio, imgHeight * ratio);
     pdf.save(`${data.participantName}_Certificate.pdf`);
   };
@@ -64,7 +67,7 @@ export const CertificatePreview: React.FC<CertificatePreviewProps> = ({ data }) 
   return (
     <div className="bg-white rounded-xl shadow-2xl p-4 sm:p-6 border border-gray-100 w-full max-w-5xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-3">
+      <div className="flex flex-col sm:flex-row items-center justify-between mb-4 gap-3">
         <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Certificate Preview</h2>
         <button
           onClick={handleDownload}
@@ -83,7 +86,7 @@ export const CertificatePreview: React.FC<CertificatePreviewProps> = ({ data }) 
       {/* Certificate Area */}
       <div
         ref={certificateRef}
-        className="relative bg-white p-6 sm:p-10 md:p-16 rounded-lg border-2 sm:border-4 border-blue-400 aspect-[4/3] flex flex-col justify-between min-h-[400px] sm:min-h-[500px] md:min-h-[600px] overflow-hidden"
+        className="relative bg-white p-6 sm:p-10 md:p-14 rounded-lg border-2 sm:border-4 border-blue-400 aspect-[4/3] flex flex-col justify-between min-h-[400px] sm:min-h-[500px] md:min-h-[600px] overflow-hidden"
       >
         {/* Top Bar */}
         <div className="flex justify-between items-center absolute left-4 right-4 top-3">
@@ -92,44 +95,55 @@ export const CertificatePreview: React.FC<CertificatePreviewProps> = ({ data }) 
         </div>
 
         {/* Banner */}
-        <img src="/new.png" alt="Blue Banner" className="w-2/3 max-w-xs sm:max-w-md mx-auto mt-10 mb-4 object-contain" />
+        <img
+          src="/new.png"
+          alt="Blue Banner"
+          className="w-2/3 max-w-xs sm:max-w-md mx-auto object-contain"
+        />
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col items-center justify-center mb-8 mt-1 text-center px-2">
-          <p className="text-base sm:text-lg md:text-xl font-semibold text-gray-800 mb-4">
+        <div className="flex-1 flex flex-col items-center justify-center text-center px-2">
+          <p className="text-base sm:text-lg md:text-xl font-semibold text-gray-800 mb-3">
             This is to certify that
           </p>
-          <div className="border-b-2 border-blue-400 pb-2 mb-4 sm:mb-6 w-3/4 sm:w-2/3 mx-auto">
+          <div className="border-b-2 border-blue-400 pb-2 mb-4 sm:mb-5 w-3/4 sm:w-2/3 mx-auto">
             <span className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 block">
               {data.participantName || "________________________"}
             </span>
           </div>
-          <div className="max-w-xl mx-auto text-justify px-2 sm:px-4">
-            <p className="text-sm sm:text-base md:text-lg text-gray-700">
-              has successfully participated in{" "}
-              <span className="font-bold text-blue-600 underline decoration-blue-200 inline-block">
-                {data.programName || "____________________"}
-              </span>
-              , organized by the <span className="font-bold">Google Student Ambassador 2025</span>{" "}
-              at{" "}
-              <span className="font-bold text-blue-600 inline-block">
-                {data.organizationName || "____________________"}
-              </span>
-              , demonstrating enthusiasm, leadership, and commitment to fostering learning and innovation within their community.
-            </p>
-          </div>
+          <div className="max-w-xl mx-auto text-center px-2 sm:px-4">
+  <p className="text-sm sm:text-base md:text-lg text-gray-700">
+    has successfully participated in{" "}
+    <span className="font-bold text-blue-600 underline decoration-blue-200 inline-block">
+      {data.programName || "____________________"}
+    </span>
+    , organized by the{" "}
+    <span className="font-bold">Google Student Ambassador 2025</span>{" "}
+    at{" "}
+    <span className="font-bold text-blue-600 inline-block">
+      {data.organizationName || "____________________"}
+    </span>
+    , demonstrating enthusiasm, leadership, and commitment to fostering
+    learning and innovation within their community.
+  </p>
+</div>
+
         </div>
 
         {/* Footer */}
-        <div className="flex flex-col sm:flex-row justify-around items-center mb-12 sm:mb-16 gap-6 sm:gap-20 px-4">
+        <div className="flex flex-col sm:flex-row justify-around items-center mb-10 sm:mb-14 gap-6 sm:gap-16 px-4">
           <div className="text-center">
-            <p className="text-xs sm:text-sm font-semibold text-gray-500 uppercase tracking-wide">Date</p>
+            <p className="text-xs sm:text-sm font-semibold text-gray-500 uppercase tracking-wide">
+              Date
+            </p>
             <p className="text-sm sm:text-base md:text-lg font-medium text-gray-800 mt-1">
               {data.date ? formatDate(data.date) : "_______________"}
             </p>
           </div>
           <div className="text-center">
-            <p className="text-xs sm:text-sm font-semibold text-gray-500 uppercase tracking-wide">Initiative Name</p>
+            <p className="text-xs sm:text-sm font-semibold text-gray-500 uppercase tracking-wide">
+              Initiative Name
+            </p>
             <p className="text-sm sm:text-base md:text-lg font-medium text-gray-800 mt-1">
               {data.initiativeName || "_______________"}
             </p>
@@ -144,8 +158,16 @@ export const CertificatePreview: React.FC<CertificatePreviewProps> = ({ data }) 
         </div>
 
         {/* Cloud Decorations */}
-        <img src="/left_cloud.png" alt="Cloud Left" className="absolute bottom-20 sm:bottom-32 left-0 w-10 sm:w-14 md:w-16 opacity-80" />
-        <img src="/right_cloud.png" alt="Cloud Right" className="absolute top-24 sm:top-40 right-0 w-10 sm:w-14 md:w-16 opacity-80" />
+        <img
+          src="/left_cloud.png"
+          alt="Cloud Left"
+          className="absolute bottom-20 sm:bottom-28 left-0 w-10 sm:w-14 md:w-16 opacity-80"
+        />
+        <img
+          src="/right_cloud.png"
+          alt="Cloud Right"
+          className="absolute top-20 sm:top-32 right-0 w-10 sm:w-14 md:w-16 opacity-80"
+        />
       </div>
     </div>
   );
